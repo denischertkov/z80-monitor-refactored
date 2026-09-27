@@ -1,7 +1,7 @@
-SIGNON          DB "Z80 SBC Boot ROM 1.2"
+SIGNON          DB "Z80 SBC Boot ROM 1.4"
         DB " by G. Searle / D. Chertkov"
         DB $0D,$0A
-        INCLUDE "../build_info.inc"     ; add the build info string
+        INCLUDE "../build_info.inc"     ; add the build date info string
         DB "Type ? for options"
         DB $0D,$0A,$00
 
@@ -25,16 +25,11 @@ LDETXT
 
 HLPTXT
         DB $0D,$0A
-        DB "R           - Reset"
-        DB $0D,$0A
-        DB "BC or BW    - ROM BASIC Cold or Warm"
-        DB $0D,$0A
-        DB "X           - Boot CP/M (load $D000-$FFFF from disk)"
-        DB $0D,$0A
-        DB ":nnnnnn...  - Load Intel-Hex file record"
-        DB $0D,$0A
-        DB "Mxxxx       - Memory dump"
-        DB $0D,$0A
-        DB "P           - Port test", 13, 10
-        DB "Gxxxx       - Goto address", 13, 10
+        DB "R           - Reset", $0D, $0A
+        DB "BC or BW    - ROM BASIC Cold or Warm", $0D, $0A
+        DB "X           - Boot CP/M (load $D000-$FFFF from disk)", $0D, $0A
+        DB ":nnnnnn...  - Load Intel-Hex file record", $0D, $0A
+        DB "Mxxxx       - Memory dump", $0D, $0A
+        DB "P           - Port test", $0D, $0A
+        DB "Gxxxx       - Goto address", $0D, $0A
         DB $00

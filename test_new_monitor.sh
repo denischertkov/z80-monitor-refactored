@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Prepare a RAM test. Device writes require an explicit --upload.
-# rom_loader.asm is the user's existing hardware-specific loader.
+# rom_loader.asm is the user's existing hardware-specific loader - it
+# disable the ROM and copy the monitor to RAM and restart it from 0000h.
+
 set -euo pipefail
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 upload=0

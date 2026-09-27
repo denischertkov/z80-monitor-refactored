@@ -1,6 +1,16 @@
 ; SIO/IM2 initialization is unchanged. Falls through into MAIN.
-INIT            LD SP,STACK             ; Set the Stack Pointer
+INIT    LD SP,STACK                     ; Set the Stack Pointer
 
+        ; Set delay until SIO restarted after a reset. This is needed to avoid a race condition with the SIO.
+.delay:
+        LD BC,03FFFh
+.d0:
+        DEC BC                          ; не использовать DJNZ, так как DEC BC не обновляет флаг Z
+        LD A,B                          ; ИЛИ для B и C, чтобы проверить, не достигнут ли ноль
+        OR C                            ; обновляет флаг Z
+        JR NZ,.d0
+
+; Initialize the serial buffers and pointers       
         LD HL,serABuf
         LD (serAInPtr),HL
         LD (serARdPtr),HL
@@ -22,7 +32,7 @@ INIT            LD SP,STACK             ; Set the Stack Pointer
 
         LD A,$04
         OUT (SIOA_C),A
-        LD A,$C4
+        LD A,$C4                        ; SIOA Control Register 1: 8N1, CLK/64. Replace with $84 for CLK/32 (230400 baud).
         OUT (SIOA_C),A
 
         LD A,$01
@@ -47,7 +57,7 @@ INIT            LD SP,STACK             ; Set the Stack Pointer
 
         LD A,$04
         OUT (SIOB_C),A
-        LD A,$C4
+        LD A,$C4                        ; SIOB Control Register 1: 8N1, CLK/64. Replace with $84 for CLK/32 (230400 baud).
         OUT (SIOB_C),A
 
         LD A,$01
