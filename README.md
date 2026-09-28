@@ -106,6 +106,11 @@ SIO, INIT, фильтрация консоли, разбор байтов Intel 
 Дублирование аппаратных веток A/B оставлено намеренно: общая подпрограмма
 изменила бы регистры, глубину стека и время выполнения драйвера.
 
+A short delay was added before SIO initialization to the INIT.
+The board uses an RC-generated reset signal, and the CPU can become
+ready slightly earlier than the SIO. Without the delay, the SIO may
+occasionally fail to initialize correctly after power-on.
+
 ## RAM, стек и интерфейсы
 
 | Назначение | Адрес |
@@ -205,5 +210,6 @@ bash test_new_monitor.sh --upload --port /dev/ttyUSB0
 
 Original monitor: Grant Searle. HEX routines: Joel Owens.
 Расширения: Denis Chertkov, denis@chertkov.info, 20260912.
+
 Исходное ограничение **NON COMMERCIAL USE ONLY** и требование acknowledgement
 сохранены; новой лицензией этот архив их не заменяет.

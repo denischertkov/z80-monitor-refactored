@@ -1,13 +1,16 @@
 ; SIO/IM2 initialization is unchanged. Falls through into MAIN.
 INIT    LD SP,STACK                     ; Set the Stack Pointer
 
-        ; Set delay until SIO restarted after a reset. This is needed to avoid a race condition with the SIO.
+        ; Delay before SIO initialization after a reset.
+        ; Required on this hardware to allow the Z80 SIO to complete reset
+        ; after power-on before programming its control registers.
+        ; Without this code the SIO doesn't work, because not configured by CPU.
 .delay:
         LD BC,03FFFh
 .d0:
-        DEC BC                          ; не использовать DJNZ, так как DEC BC не обновляет флаг Z
-        LD A,B                          ; ИЛИ для B и C, чтобы проверить, не достигнут ли ноль
-        OR C                            ; обновляет флаг Z
+        DEC BC                          ; Do not use DJNZ: DEC BC does not update the Z flag.
+        LD A,B                          ; OR B and C to check whether the counter has reached zero.
+        OR C                            ; Updates the Z flag.
         JR NZ,.d0
 
 ; Initialize the serial buffers and pointers       
