@@ -98,16 +98,20 @@ pt_value_edit:
 pt_edit_byte:
         ; Fields are on rows 3/4; column 9 follows each 8-character label.
         call pt_edit_position
+        ld a,' '                        ; clean previous value
+        rst 08h
+        rst 08h
+        ld a,'h'                        ; print 'h '
+        RST 08h
         ld a,' '
-        rst 08h
-        rst 08h
-        call pt_edit_position
+        rst 08h       
+        call pt_edit_position           ; return cursor to the field
         call READ_HEX16
-        jp c,pt_main                     ; Esc/Ctrl-C cancels without changing data
-        jp z,pt_main                     ; Empty Enter keeps the current value
-        ld a,b
-        cp 3
-        jr nc,pt_edit_retry               ; Port and value are 8-bit fields
+        jp c,pt_main                    ; Esc/Ctrl-C cancels without changing data
+        jp z,pt_main                    ; Empty Enter keeps the current value
+        ld a,b                          ; B = number of entered digits
+        cp 3                            ; if more than 3
+        jr nc,pt_edit_retry             ; clear and enter again
         ld a,l
         ld (de),a
         jr pt_main
