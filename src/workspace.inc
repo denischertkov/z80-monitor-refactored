@@ -17,13 +17,13 @@ STACK           EQU stackSpace + 32
 baseaddr        EQU STACK               ; memview base address variable (2 bytes)
 portno          EQU baseaddr+2          ; porttest port number variable (1 byte)
 value           EQU portno+1            ; porttest value variable (1 byte)
-        ; the next variable should use the value+1 address!
+me_cursor       EQU value+1             ; memedit selected address (2 bytes)
 
 ; The stack grows down from STACK=$40AE; baseaddr starts just above it.
-; Reserved stack: $408E..$40AD, 32 bytes. Do not expand it silently:
-; variable addresses and the user's loader address must be preserved.
-WORKSPACE_END   EQU value+1
+; Reserved stack: $408E..$40AD, 32 bytes. Workspace variables continue above it.
+WORKSPACE_END   EQU me_cursor+2
         ASSERT STACK == $40AE
         ASSERT baseaddr == $40AE
         ASSERT portno == $40B0
         ASSERT value == $40B1
+        ASSERT me_cursor == $40B2

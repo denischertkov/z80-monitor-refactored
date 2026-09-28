@@ -1,5 +1,5 @@
 ; The dispatcher pushes MAIN and enters command handlers via JP.
-; MEMDUMP/PORTTEST must therefore return with RET without resetting SP.
+; MEMDUMP/MEMEDIT/PORTTEST must return with RET without resetting SP.
 MAIN            LD HL,MAIN              ; Save entry point for Monitor
         PUSH HL                         ; This is the return address
 MAIN0           CALL TXCRLF             ; Entry point for Monitor, Normal
@@ -31,6 +31,9 @@ MAIN1           CALL RDCHR              ; Get a character from the input port
 
         CP 'M'
         JP Z,MEMDUMP                    ; Memory viewer
+
+        CP 'E'
+        JP Z,MEMEDIT                    ; Memory editor
 
         CP 'P'
         JP Z,PORTTEST                   ; Port test

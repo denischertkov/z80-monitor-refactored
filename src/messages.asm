@@ -30,6 +30,7 @@ HLPTXT
         DB "X           - Boot CP/M (load $D000-$FFFF from disk)", $0D, $0A
         DB ":nnnnnn...  - Load Intel-Hex file record", $0D, $0A
         DB "Mxxxx       - Memory dump", $0D, $0A
+        DB "E           - Memory editor", $0D, $0A
         DB "P           - Port test", $0D, $0A
         DB "Gxxxx       - Goto address", $0D, $0A
         DB $00

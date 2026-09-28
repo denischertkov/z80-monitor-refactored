@@ -234,7 +234,7 @@ class RefactorTests(unittest.TestCase):
             expr = re.sub(r'\$([0-9A-Fa-f]+)', r'0x\1', value)
             expr = re.sub(r'\b([0-9][0-9A-Fa-f]*)[hH]\b', r'0x\1', expr)
             constants[name] = eval(expr, {'__builtins__': {}}, constants)
-        for name, addr in [('STACK', 0x40ae), ('baseaddr', 0x40ae), ('portno', 0x40b0), ('value', 0x40b1), ('WORKSPACE_END', 0x40b2)]:
+        for name, addr in [('STACK', 0x40ae), ('baseaddr', 0x40ae), ('portno', 0x40b0), ('value', 0x40b1), ('me_cursor', 0x40b2), ('WORKSPACE_END', 0x40b4)]:
             self.assertEqual(constants[name], addr)
 
     def test_hex_formatters(self):
