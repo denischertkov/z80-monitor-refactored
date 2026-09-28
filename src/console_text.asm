@@ -57,9 +57,9 @@ PRINT_BIN8:
 print_bin8_loop:
         SLA D                           ; Shift left, MSB -> carry flag
         LD A,'0'                        ; Prepare to print '0' or '1'
-        ADC A,0                         ; Add carry flag to A
+        ADC A,0                         ; Add carry flag to A: '0' or '1'
         RST 08H                         ; Print character
-        DJNZ print_bin8_loop
+        DJNZ print_bin8_loop            ; B is decremented, loop if B!=0
         POP DE
         POP BC
         RET
