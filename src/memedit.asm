@@ -150,13 +150,24 @@ me_edit_byte:
         LD A,B
         CP 3
         JR NC,me_edit_byte              ; Byte accepts at most two hex digits
+        CP 1                            ; If only one digit, 
+        JR NZ,me_byte_echoed            ; Two typed digits are already displayed correctly.
+        ; READ_HEX16 echoes input and emits CR/LF on Enter. For one digit,
+        ; restore the byte cursor and overwrite it with the zero-padded value.
+        PUSH HL
+        CALL me_position_cursor
+        POP HL
+        LD A,L                          ; print a leading zero to match the two-digit format
+        CALL PRINT_HEX8
+me_byte_echoed:
         ; READ_HEX16 returns the parsed value in HL. Use the low byte (L), then
         ; reload the selected address because the input routine uses HL.
         LD A,L
         LD C,A
         LD HL,(me_cursor)
         LD (HL),C                       ; Commit only after valid Enter
-        JP me_main
+        ; JP me_main                    ; don't redraw the whole page; just print the new byte and reposition the cursor
+        JP me_cursor_only
 
 ; Draw the 16x16 page in the same layout as MEMDUMP.
 me_draw_page:
