@@ -166,6 +166,7 @@ me_byte_echoed:
         LD C,A
         LD HL,(me_cursor)
         LD (HL),C                       ; Commit only after valid Enter
+        CALL me_refresh_ascii           ; Update only this byte's character cell
         ; JP me_main                    ; don't redraw the whole page; just print the new byte and reposition the cursor
         JP me_cursor_only
 
@@ -261,6 +262,52 @@ me_position_cursor:
         LD A,'H'
         RST 08h
         POP DE
+        RET
+
+; Refresh the ASCII character corresponding to the selected byte.
+; ASCII starts at column 57; its row matches the HEX byte's row.
+me_refresh_ascii:
+        PUSH BC
+        PUSH DE
+        PUSH HL
+        LD HL,(me_cursor)
+        LD DE,(baseaddr)
+        OR A
+        SBC HL,DE                       ; HL = selected byte's offset in the page
+        LD A,1Bh
+        RST 08h
+        LD A,'['
+        RST 08h
+        LD A,L
+        RRCA
+        RRCA
+        RRCA
+        RRCA
+        AND $0F
+        ADD A,4
+        CALL me_print_decimal           ; Row = offset high nibble + 4
+        LD A,';'
+        RST 08h
+        LD A,L
+        AND $0F
+        ADD A,57
+        CALL me_print_decimal           ; Column = ASCII start + byte index
+        LD A,'H'
+        RST 08h
+        LD HL,(me_cursor)
+        LD A,(HL)
+        CP $20
+        JR C,me_refresh_ascii_dot
+        CP $7F
+        JR NC,me_refresh_ascii_dot
+        JR me_refresh_ascii_out
+me_refresh_ascii_dot:
+        LD A,'.'
+me_refresh_ascii_out:
+        RST 08h
+        POP HL
+        POP DE
+        POP BC
         RET
 
 ; Print unsigned decimal A (0..52) without leading zeroes.
