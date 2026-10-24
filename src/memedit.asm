@@ -357,9 +357,6 @@ me_fill_byte:
         CALL READ_HEX16                 ; read the byte value to fill with
         JP C,me_main                    ; Cancel keeps the current cursor
         JP Z,me_main                    ; Empty Enter keeps the current cursor
-        LD A,L                          ; Z80 supports LD (nn),A, not LD (nn),L
-        LD (me_fill_value),A
-
         ; Check the B < 3 (number of entered digits) to ensure the value is in the range 0-FFh.
         LD A,B
         CP 3
@@ -371,8 +368,9 @@ me_fill_byte:
         JP me_main                      ; Invalid range: ignore the fill command
 
 me_fill_value_ok:
+        LD A,L                          ; Z80 supports LD (nn),A, not LD (nn),L
+        LD (me_fill_value),A            ; save the byte value to fill with
         ; Check that the range is valid: From < To
-
         LD HL,(me_fill_from_address)
         LD DE,(me_fill_to_address)
         OR A
