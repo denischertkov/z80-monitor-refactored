@@ -12,7 +12,6 @@ MEMEDIT:
         CALL READ_HEX16
         RET C                           ; Cancel returns to the monitor
         LD (me_cursor),HL
-        LD A,H
         LD L,0
         LD (baseaddr),HL                ; Align page to the selected address
 
@@ -76,7 +75,6 @@ me_move_cursor:
 me_update_page:
         ; Compare the cursor's page (high byte, low byte forced to zero) with
         ; baseaddr. SBC needs Carry cleared first; OR A does that without changing HL.
-        LD A,H
         LD L,0
         LD DE,(baseaddr)
         OR A
@@ -100,7 +98,6 @@ me_goto_addr:
         JP C,me_main                    ; Cancel keeps the current cursor
         JP Z,me_main                    ; Empty Enter keeps the current cursor
         LD (me_cursor),HL
-        LD A,H
         LD L,0
         LD (baseaddr),HL
         JP me_main
@@ -437,10 +434,10 @@ me_fill_from_msg:
         db ESC,"[21;34H"                ; ANSI cursor positions
         DB "Fill range"
         db ESC,"[22;34H"                ; ANSI cursor positions
-        DB "From: ",0
+        DB "From :",0
 me_fill_to_msg:
         db ESC,"[23;34H"                ; ANSI cursor positions
-        DB "To:   ",0
+        DB "To   :",0
 me_fill_value_msg:
         db ESC,"[24;34H"                ; ANSI cursor positions
         DB "Value:",0
