@@ -29,8 +29,8 @@ HLPTXT
         DB "BC or BW    - ROM BASIC Cold or Warm", $0D, $0A
         DB "X           - Boot CP/M (load $D000-$FFFF from disk)", $0D, $0A
         DB ":nnnnnn...  - Load Intel-Hex file record", $0D, $0A
-        DB "M[xxxx]     - Memory dump", $0D, $0A
-        DB "E[xxxx]     - Memory editor", $0D, $0A
+        ; DB "M[xxxx]     - Memory dump", $0D, $0A
+        DB "E[xxxx]     - Memory viewer/editor", $0D, $0A
         DB "P           - Port test", $0D, $0A
         DB "Gxxxx       - Goto address", $0D, $0A
         DB $00

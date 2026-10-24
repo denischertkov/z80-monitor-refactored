@@ -29,8 +29,8 @@ MAIN1           CALL RDCHR              ; Get a character from the input port
         CP 'G'
         JP Z,GOTO
 
-        CP 'M'
-        JP Z,MEMDUMP                    ; Memory viewer
+        ; CP 'M'
+        ; JP Z,MEMDUMP                    ; Memory viewer
 
         CP 'E'
         JP Z,MEMEDIT                    ; Memory editor

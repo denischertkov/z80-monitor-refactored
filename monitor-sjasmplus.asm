@@ -35,7 +35,7 @@
         INCLUDE "src/cf_boot.asm"
         INCLUDE "src/messages.asm"
         INCLUDE "src/terminal.asm"
-        INCLUDE "src/memview.asm"
+        ; INCLUDE "src/memview.asm"
         INCLUDE "src/memedit.asm"
         INCLUDE "src/porttest.asm"
 
