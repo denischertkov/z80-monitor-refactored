@@ -36,6 +36,8 @@ me_waitkey:
         JR Z,me_prev_page
         CP 'G'
         JR Z,me_goto_addr
+        CP 'F'
+        JP Z,me_fill_byte
         JR me_waitkey
 
 me_next_page:
@@ -337,6 +339,76 @@ me_decimal_unit_only:
         RST 08h
         RET
 
+me_fill_byte:
+        LD HL,me_fill_from_msg
+        CALL PRINT
+        CALL READ_HEX16                 ; read the starting address for the fill
+        JP C,me_main                    ; Cancel keeps the current cursor
+        JP Z,me_main                    ; Empty Enter keeps the current cursor
+        LD (me_fill_from_address),HL
+
+
+        LD HL,me_fill_to_msg
+        CALL PRINT
+        CALL READ_HEX16                 ; read the ending address for the fill
+        JP C,me_main                    ; Cancel keeps the current cursor
+        JP Z,me_main                    ; Empty Enter keeps the current cursor
+        LD (me_fill_to_address),HL
+
+        LD HL,me_fill_value_msg
+        CALL PRINT
+        CALL READ_HEX16                 ; read the byte value to fill with
+        JP C,me_main                    ; Cancel keeps the current cursor
+        JP Z,me_main                    ; Empty Enter keeps the current cursor
+        LD A,L                          ; Z80 supports LD (nn),A, not LD (nn),L
+        LD (me_fill_value),A
+
+        ; Check the B < 3 (number of entered digits) to ensure the value is in the range 0-FFh.
+        LD A,B
+        CP 3
+        JR C,me_fill_value_ok           ; Accept one or two hex digits
+
+        LD HL,me_fill_error_value_msg
+        CALL PRINT                      ; print an error message for invalid range
+        RST 10h                         ; Wait for any key
+        JP me_main                      ; Invalid range: ignore the fill command
+
+me_fill_value_ok:
+        ; Check that the range is valid: From < To
+
+        LD HL,(me_fill_from_address)
+        LD DE,(me_fill_to_address)
+        OR A
+        SBC HL,DE                       ; check that the range is valid
+        JR C,me_fill_range_valid
+        
+        LD HL,me_fill_error_range_msg
+        CALL PRINT                      ; print an error message for invalid range
+        RST 10h                         ; Wait for any key
+        JP me_main                      ; Invalid range: ignore the fill command
+
+me_fill_range_valid:
+        LD HL,(me_fill_from_address)
+        LD DE,(me_fill_to_address)
+        LD A,(me_fill_value)            ; Binary value of the byte
+        LD C,A
+
+me_fill_loop:
+        LD (HL),C
+        PUSH HL
+        OR A                            ; Clear Carry before SBC
+        SBC HL,DE                       ; HL = HL - DE; if HL = DE, then Z= 1
+        POP HL
+        JR Z,me_fill_done               ; if HL = DE, go to done; else continue filling
+        INC HL
+        JR me_fill_loop
+
+me_fill_done:
+        LD HL,me_fill_ok_msg
+        CALL PRINT                      ; print a success message
+        RST 10h                         ; Wait for any key
+        JP me_main   
+
 me_exit:
         LD HL,me_exit_cursor            ; save the current screen (set cursor on the bottom)
         CALL PRINT
@@ -359,7 +431,33 @@ me_help:
         DB "Q            quit",13,10
         DB 0
 me_goto_msg:
-        db ESC,"[3;1H"                  ; ANSI cursor positions for the ADDRESS hex fields.
+        db ESC,"[3;1H"                  ; ANSI cursor positions
         DB "Address: ",0
+me_fill_from_msg:
+        db ESC,"[21;34H"                ; ANSI cursor positions
+        DB "Fill range"
+        db ESC,"[22;34H"                ; ANSI cursor positions
+        DB "From: ",0
+me_fill_to_msg:
+        db ESC,"[23;34H"                ; ANSI cursor positions
+        DB "To:   ",0
+me_fill_value_msg:
+        db ESC,"[24;34H"                ; ANSI cursor positions
+        DB "Value:",0
+me_fill_error_range_msg:
+        db ESC,"[25;34H"                ; ANSI cursor positions
+        DB "ERROR: From value must be more than To!",0
+me_fill_error_value_msg:
+        db ESC,"[25;34H"                ; ANSI cursor positions
+        DB "ERROR: The value must be in range 0-FFh!",0
+me_fill_ok_msg:
+        db ESC,"[25;34H"                ; ANSI cursor positions
+        DB "Fill completed successfully!",0
+me_fill_from_address:                   ; fill start address
+        DW 0000h
+me_fill_to_address:                     ; fill end address
+        DW 00FFh
+me_fill_value:                          ; fill byte value
+        DB 00h
 me_exit_cursor:
-        db ESC,"[27;1H",0               ; ANSI cursor positions for the ADDRESS hex fields.
+        db ESC,"[18;1H",13,10,0               ; ANSI cursor positions to the bottom of the screen
