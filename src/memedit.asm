@@ -419,10 +419,11 @@ me_help:
         DB 13,10
         DB "Arrows       move cursor",13,10
         DB "ENTER        edit/save byte",13,10
-        DB "Use only safe writable RAM",13,10
+        ; DB "Use only safe writable RAM",13,10
         DB "N/SPACE,PgDn next page",13,10
         DB "P,PgUp       previous page",13,10
         DB "G            goto address",13,10
+        DB "F            fill range with value",13,10
         DB "Q            quit",13,10
         DB 0
 me_goto_msg:
